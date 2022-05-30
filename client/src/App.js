@@ -1,92 +1,46 @@
-import "./App.css";
+import "./index.css";
 import Form from "./components/Form";
 import React, { useState } from "react";
 
 import socket from "./components/Socket";
-import Chatroom from "./components/pagecomponents/chatroom";
+import Chatroom from "./components/pagecomponents/Chatroom";
+
+const defaultUser = { usename: "", avatar: "/assets/images/avatars/1.png" };
 
 const App = () => {
-	const [user, setUser] = useState({ username: "", avatar: "0" });
+	const [user, setUser] = useState(defaultUser);
 	const [register, setRegister] = useState(false);
-	const [errormessage, setErrormessage] = useState({
-		errormessage: "",
-		color: "",
-	});
+
 	const disconnect = () => {
 		setRegister(false);
-		setUser({ username: "", avatar: "0" });
+		setUser(defaultUser);
 		socket.emit("logout");
+		socket.off();
 	};
 
-	const validate = () => {
-		if (/\s/.test(user.username)) {
-			setErrormessage({
-				errormessage: "Username cannot contain blank characters",
-				color: "red",
-			});
-			return false;
-		}
-		if (user.username.length < 4) {
-			setErrormessage({
-				errormessage: "Username must be more than 4 characters",
-				color: "red",
-			});
-			return false;
-		} else if (user.username.length > 20) {
-			setErrormessage({
-				errormessage: "Username must be less than 20 characters",
-				color: "red",
-			});
-			return false;
-		} else if (user.username.length > 4 && user.username.length < 20) {
-			setErrormessage({
-				errormessage: "",
-				color: "",
-			});
-			return true;
-		}
-	};
-
-	const joinchat = (e) => {
-		e.preventDefault();
-
-		if (validate()) {
-			setRegister(true);
-			socket.connect();
-		}
+	const joinchat = () => {
+		setRegister(true);
+		socket.connect();
 	};
 
 	if (!register) {
 		return (
 			<div
-				className="fixed grid items-center w-full h-full bg-slate-800"
+				className="grid place-items-center w-full min-h-screen bg-slate-800 p-4"
 				style={{ backgroundImage: `url(/assets/images/avatars/chat.svg)` }}
 			>
 				<Form
-					errormessage={errormessage}
-					onChange={(e) =>
-						setUser((prev) => {
-							prev.username = e.target.value;
-							validate();
-							return prev;
-						})
-					}
-					onSubmit={joinchat}
-					user={user}
-					id="main1"
-					onClick={(e) =>
-						setUser((prev) => {
-							prev.avatar = e.target.id;
-							//console.log(prev)
-							return prev;
-						})
-					}
+					initialAvatar={user.avatar}
+					onComplete={({ username, avatar }) => {
+						setUser({ username, avatar });
+						joinchat();
+					}}
 				/>
 			</div>
 		);
-	} else {
-		return <Chatroom onClick={disconnect} user={user} />;
 	}
+
+	return <Chatroom onLogout={disconnect} user={user} />;
 };
 
 export default App;

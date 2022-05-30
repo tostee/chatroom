@@ -5,30 +5,10 @@ import Sendmessage from "../Sendmessage";
 import socket from "../Socket";
 import Youmessage from "../Youmessage";
 
-const Chatroom = ({ onClick, user }) => {
+const Chatroom = ({ onLogout, user }) => {
+	console.log("Chat");
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState([]);
-	//socket.emit("conected","dddd")
-
-	useEffect(() => {
-		socket.emit("conected", user);
-	}, [user]);
-
-	useEffect(() => {
-		socket.on("conected", (user) => {});
-		return () => {
-			socket.off();
-		};
-	}, []);
-
-	useEffect(() => {
-		socket.on("messages", (message) => {
-			setMessages([...messages, message]);
-		});
-		return () => {
-			socket.off();
-		};
-	}, [messages]);
 
 	///////////////////////////////
 	//block the view to last chat//
@@ -36,24 +16,30 @@ const Chatroom = ({ onClick, user }) => {
 	const blockend = useRef(null);
 
 	useEffect(() => {
+		socket.emit("conected", user);
+		socket.on("messages", (m) => receiveMessage(m));
+	}, []);
+
+	const receiveMessage = (message) => {
+		setMessages([...messages, message]);
 		blockend.current.scrollIntoView({ behavior: "smooth" });
-	}, [messages]);
-	////////////////////////////////
+	};
 
 	const submit = (e) => {
 		e.preventDefault();
 		socket.emit("chat", user, message);
 		setMessage("");
 	};
+
 	return (
 		<div class="flex-1 p:2 sm:p-6 justify-between flex flex-col bg-slate-100 h-screen">
 			<div class="flex sm:items-center justify-between py-3 border-b-2 bg-slate-800 border-gray-200">
 				<div class="relative flex items-center space-x-4">
 					<div class="relative pl-2">
 						<img
-							src={`/assets/images/avatars/${user.avatar}.png`}
-							alt=""
+							src={user.avatar}
 							class="w-10 sm:w-16 h-10 sm:h-16 rounded-full"
+							alt="avatar"
 						/>
 					</div>
 					<div class="flex flex-col leading-tight">
@@ -65,7 +51,7 @@ const Chatroom = ({ onClick, user }) => {
 				<div class="flex items-center space-x-2 pr-2">
 					<button
 						title="logout"
-						onClick={onClick}
+						onClick={() => onLogout()}
 						class="inline-flex items-center justify-center rounded-full border h-10 w-10 transition duration-500 ease-in-out bg-red-500 text-gray-100 hover:bg-red-700 focus:outline-none"
 					>
 						<svg
@@ -106,7 +92,7 @@ const Chatroom = ({ onClick, user }) => {
 				})}
 				<div ref={blockend}></div>
 			</div>
-			<div class=" bg-slate-700 p-2 mb-2 sm:mb-0">
+			<div class="bg-slate-700 p-2 mb-2 sm:mb-0">
 				<form onSubmit={submit}>
 					<Sendmessage
 						value={message}

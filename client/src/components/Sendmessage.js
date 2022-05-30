@@ -1,4 +1,8 @@
+import React, { useState, useEffect, useRef } from "react";
+
 const Sendmessage = ({ value, onChange }) => {
+	const [message, setMessage] = useState("");
+
 	return (
 		<div className="relative flex ">
 			<span className="absolute inset-y-0 flex items-center">
