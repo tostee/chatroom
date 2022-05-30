@@ -15,7 +15,7 @@ const customStyles = {
 	},
 };
 
-const Mymodal = ({ onSelect, avatar }) => {
+const MyModal = ({ onSelect, avatar }) => {
 	const [modalIsOpen, setIsOpen] = useState(false);
 
 	// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
@@ -116,4 +116,4 @@ const Previewavatar = ({ avatar }) => {
 	);
 };
 
-export default Mymodal;
+export default MyModal;

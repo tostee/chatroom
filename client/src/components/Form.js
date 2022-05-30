@@ -1,25 +1,22 @@
-import Mymodal from "./Mymodal";
-import React, { useState } from "react";
+import { useState } from "react";
+import MyModal from "./MyModal";
 
-const Form = ({ onComplete, onChange, initialAvatar }) => {
+const Form = ({ onComplete, initialAvatar }) => {
 	const [avatar, setAvatar] = useState(initialAvatar);
 	const [username, setUsername] = useState("");
 	const [error, setError] = useState(null);
 
-	let color = "";
-	if (error) {
-		color = "red-700";
-	} else {
-		color = "gray-700";
-	}
+	const color = error ? "red-700" : "gray-700";
 
 	const validate = (value) => {
-		if (/^[a-bA-Z]+[a-bA-Z0-9]*$/.test(value)) {
-			return "Username cannot contain blank characters.";
+		if (!value) return "This field is required.";
+
+		if (!/^[a-bA-Z]+[a-bA-Z0-9]*$/i.test(value)) {
+			return "Use only letter, numbers and can not starts with number.";
 		}
 
 		if (value.length < 4) {
-			return "Username must be more than 4 characters.";
+			return "Username must be more than 3 characters.";
 		}
 
 		if (value.length > 20) {
@@ -47,6 +44,7 @@ const Form = ({ onComplete, onChange, initialAvatar }) => {
 					<input
 						className={`appearance-none bg-transparent w-4/5 border-2 ml-1 text-${color} mr-3 py-1 px-2 leading-tight focus:outline-none required:border-red-500`}
 						type="text"
+						autoFocus
 						value={username}
 						placeholder="Chat Nickname"
 						onChange={(e) => {
@@ -68,7 +66,7 @@ const Form = ({ onComplete, onChange, initialAvatar }) => {
 				</div>
 				<div className="">
 					<div className="flex items-center justify-center bg-gray-100 bg-opacity-5 mt-2">
-						<Mymodal onSelect={(index) => setAvatar(index)} avatar={avatar} />
+						<MyModal onSelect={(index) => setAvatar(index)} avatar={avatar} />
 					</div>
 				</div>
 			</div>

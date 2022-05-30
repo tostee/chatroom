@@ -1,9 +1,6 @@
-import "./index.css";
+import { useState } from "react";
+import ChatRoom from "./components/ChatRoom";
 import Form from "./components/Form";
-import React, { useState } from "react";
-
-import socket from "./components/Socket";
-import Chatroom from "./components/pagecomponents/Chatroom";
 
 const defaultUser = { usename: "", avatar: "/assets/images/avatars/1.png" };
 
@@ -14,13 +11,6 @@ const App = () => {
 	const disconnect = () => {
 		setRegister(false);
 		setUser(defaultUser);
-		socket.emit("logout");
-		socket.off();
-	};
-
-	const joinchat = () => {
-		setRegister(true);
-		socket.connect();
 	};
 
 	if (!register) {
@@ -33,14 +23,14 @@ const App = () => {
 					initialAvatar={user.avatar}
 					onComplete={({ username, avatar }) => {
 						setUser({ username, avatar });
-						joinchat();
+						setRegister(true);
 					}}
 				/>
 			</div>
 		);
 	}
 
-	return <Chatroom onLogout={disconnect} user={user} />;
+	return <ChatRoom onLogout={disconnect} user={user} />;
 };
 
 export default App;
