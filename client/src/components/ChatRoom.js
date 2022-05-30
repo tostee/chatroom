@@ -55,7 +55,7 @@ const ChatRoom = ({ onLogout, user }) => {
 				{messages.map((m) => (
 					<Message key={m.id} message={m} user={user} />
 				))}
-				<div ref={blockend} className="w-full h-1 bg-red-300"></div>
+				<div ref={blockend} className="w-full"></div>
 			</div>
 
 			<SendMessage onMessage={(m) => sendMessage(m)} />
